@@ -30,11 +30,14 @@ class QuizViewModel(
         viewModelScope.launch {
             val result = repository.getRandom10Questions(subject, userMember.grade)
             result.onSuccess { questions ->
+                val firstQ = questions.firstOrNull()
+                val allocatedSeconds = StatsUtils.calculateQuestionTimeSeconds(firstQ?.skor ?: 10)
                 _uiState.value = QuizUiState.InProgress(
                     subject = subject,
                     questions = questions,
                     currentIndex = 0,
-                    remainingSeconds = 15,
+                    remainingSeconds = allocatedSeconds,
+                    totalSecondsForCurrent = allocatedSeconds,
                     temporaryScores = emptyList(),
                     currentFeedback = null
                 )
@@ -153,9 +156,12 @@ class QuizViewModel(
         val nextIndex = current.currentIndex + 1
 
         if (nextIndex < current.questions.size) {
+            val nextQ = current.questions[nextIndex]
+            val nextSeconds = StatsUtils.calculateQuestionTimeSeconds(nextQ.skor)
             _uiState.value = current.copy(
                 currentIndex = nextIndex,
-                remainingSeconds = 15,
+                remainingSeconds = nextSeconds,
+                totalSecondsForCurrent = nextSeconds,
                 currentFeedback = null
             )
             startTimer()
@@ -216,6 +222,8 @@ class QuizViewModel(
                 meanScore = updatedSkor.mean,
                 modusScore = updatedSkor.modus,
                 medianScore = updatedSkor.median,
+                highestScore = updatedSkor.highest,
+                lowestScore = updatedSkor.lowest,
                 userRank = rank,
                 totalMembers = maxOf(allMembers.size, 1),
                 results = sessionResults.toList(),

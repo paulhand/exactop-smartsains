@@ -273,7 +273,7 @@ fun HomeScreen(
                 }
             }
 
-            // METRICS GRID: TOTAL, NUMSESI, MEAN, MODUS, MEDIAN
+            // METRICS GRID: TOTAL, MEAN, MODUS, MEDIAN, HIGHEST, LOWEST, NUMSESI, RANK
             item {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -284,7 +284,7 @@ fun HomeScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
 
-                    // Row 1: Total & NumSesi & Mean
+                    // Row 1: Total & Mean & Modus
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -297,28 +297,12 @@ fun HomeScreen(
                             modifier = Modifier.weight(1f)
                         )
                         ParameterBox(
-                            label = "numsesi",
-                            subLabel = "Sesi Kuis",
-                            value = stats.numsesi.toString(),
-                            color = BrightViolet,
-                            modifier = Modifier.weight(1f)
-                        )
-                        ParameterBox(
                             label = "mean",
                             subLabel = "Rata-rata",
                             value = String.format(Locale.US, "%.2f", stats.mean),
                             color = AcidLime,
                             modifier = Modifier.weight(1f)
                         )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Row 2: Modus & Median & Rank
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
                         ParameterBox(
                             label = "modus",
                             subLabel = "Modus Skor",
@@ -326,6 +310,15 @@ fun HomeScreen(
                             color = ElectricYellow,
                             modifier = Modifier.weight(1f)
                         )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Row 2: Median & Highest (Skor Tertinggi) & Lowest (Skor Terendah)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         ParameterBox(
                             label = "median",
                             subLabel = "Median Skor",
@@ -334,10 +327,40 @@ fun HomeScreen(
                             modifier = Modifier.weight(1f)
                         )
                         ParameterBox(
+                            label = "highest",
+                            subLabel = "Skor Tertinggi",
+                            value = if (stats.highest % 1.0 == 0.0) stats.highest.toLong().toString() else String.format(Locale.US, "%.1f", stats.highest),
+                            color = SuccessGreen,
+                            modifier = Modifier.weight(1f)
+                        )
+                        ParameterBox(
+                            label = "lowest",
+                            subLabel = "Skor Terendah",
+                            value = if (stats.lowest % 1.0 == 0.0) stats.lowest.toLong().toString() else String.format(Locale.US, "%.1f", stats.lowest),
+                            color = WarningOrange,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Row 3: Numsesi & Rank
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ParameterBox(
+                            label = "numsesi",
+                            subLabel = "Sesi Kuis",
+                            value = stats.numsesi.toString(),
+                            color = BrightViolet,
+                            modifier = Modifier.weight(1f)
+                        )
+                        ParameterBox(
                             label = "rank",
                             subLabel = "Peringkat",
                             value = "#$displayRank / $totalMembers",
-                            color = WarningOrange,
+                            color = ElectricCyan,
                             modifier = Modifier.weight(1f)
                         )
                     }

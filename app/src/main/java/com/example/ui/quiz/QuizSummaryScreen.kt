@@ -223,6 +223,26 @@ fun QuizSummaryScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        StatBox(
+                            label = "TERTINGGI",
+                            value = if (completedState.highestScore % 1.0 == 0.0) completedState.highestScore.toLong().toString() else String.format(Locale.US, "%.1f", completedState.highestScore),
+                            color = SuccessGreen,
+                            modifier = Modifier.weight(1f)
+                        )
+                        StatBox(
+                            label = "TERENDAH",
+                            value = if (completedState.lowestScore % 1.0 == 0.0) completedState.lowestScore.toLong().toString() else String.format(Locale.US, "%.1f", completedState.lowestScore),
+                            color = WarningOrange,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
 

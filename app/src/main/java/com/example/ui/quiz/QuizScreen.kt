@@ -155,7 +155,7 @@ fun QuizScreen(
 
                         QuizTimerCircle(
                             remainingSeconds = state.remainingSeconds,
-                            totalSeconds = 15,
+                            totalSeconds = state.totalSecondsForCurrent,
                             modifier = Modifier.testTag("quiz_timer_indicator")
                         )
                     }
@@ -188,7 +188,7 @@ fun QuizScreen(
                                     )
                                 }
                                 Text(
-                                    text = "+${currentQuestion.skor} Poin",
+                                    text = "+${currentQuestion.skor} Poin • ${state.totalSecondsForCurrent}s",
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = ElectricYellow

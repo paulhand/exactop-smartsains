@@ -3,6 +3,19 @@ package com.example.util
 import com.example.data.model.SkorAkumulasi
 
 object StatsUtils {
+    /**
+     * Calculates the time allotted for a question based on its score:
+     * - Lowest score (10) gives 60 seconds.
+     * - For each score increase of 10, increases time by 30 seconds.
+     */
+    fun calculateQuestionTimeSeconds(skor: Int): Int {
+        val baseTime = 60
+        if (skor <= 10) return baseTime
+        val extraScore = skor - 10
+        val extraSeconds = (extraScore * 30) / 10
+        return baseTime + extraSeconds
+    }
+
     fun updateSkorAkumulasi(
         current: SkorAkumulasi,
         newSessionScore: Double
@@ -21,6 +34,8 @@ object StatsUtils {
         val newMean = if (newNumSesi > 0) newTotal / newNumSesi else 0.0
         val modus = calculateModus(newScores)
         val median = calculateMedian(newScores)
+        val highest = newScores.maxOrNull() ?: 0.0
+        val lowest = newScores.minOrNull() ?: 0.0
 
         return SkorAkumulasi(
             scores = newScores,
@@ -28,7 +43,9 @@ object StatsUtils {
             numsesi = newNumSesi,
             mean = newMean,
             modus = modus,
-            median = median
+            median = median,
+            highest = highest,
+            lowest = lowest
         )
     }
 

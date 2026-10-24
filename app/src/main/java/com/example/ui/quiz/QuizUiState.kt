@@ -11,6 +11,7 @@ sealed interface QuizUiState {
         val questions: List<QuestionItem>,
         val currentIndex: Int,
         val remainingSeconds: Int,
+        val totalSecondsForCurrent: Int = 60,
         val temporaryScores: List<Int>,
         val currentFeedback: QuestionFeedback? = null
     ) : QuizUiState
@@ -24,6 +25,8 @@ sealed interface QuizUiState {
         val meanScore: Double,
         val modusScore: Double,
         val medianScore: Double,
+        val highestScore: Double = 0.0,
+        val lowestScore: Double = 0.0,
         val userRank: Int,
         val totalMembers: Int,
         val results: List<QuestionResult>,

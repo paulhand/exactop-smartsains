@@ -10,7 +10,9 @@ data class SkorAkumulasi(
     @Json(name = "numsesi") val numsesi: Int = 0,
     @Json(name = "mean") val mean: Double = 0.0,
     @Json(name = "modus") val modus: Double = 0.0,
-    @Json(name = "median") val median: Double = 0.0
+    @Json(name = "median") val median: Double = 0.0,
+    val highest: Double = 0.0,
+    val lowest: Double = 0.0
 ) {
     /**
      * Stored string representation in array format, delimited by comma: [180, 180, 260, 235, 265]
@@ -51,13 +53,17 @@ data class SkorAkumulasi(
                 val modus = extractNum(trimmed, "modus") ?: mean
                 val median = extractNum(trimmed, "median") ?: mean
                 val legacyScores = if (numsesi > 0) List(numsesi) { mean } else emptyList()
+                val legacyHighest = if (legacyScores.isNotEmpty()) legacyScores.maxOrNull() ?: mean else 0.0
+                val legacyLowest = if (legacyScores.isNotEmpty()) legacyScores.minOrNull() ?: mean else 0.0
                 return SkorAkumulasi(
                     scores = legacyScores,
                     total = total,
                     numsesi = numsesi,
                     mean = mean,
                     modus = modus,
-                    median = median
+                    median = median,
+                    highest = legacyHighest,
+                    lowest = legacyLowest
                 )
             }
 
@@ -87,6 +93,8 @@ data class SkorAkumulasi(
             val mean = total / numsesi
             val modus = StatsUtils.calculateModus(parsedScores)
             val median = StatsUtils.calculateMedian(parsedScores)
+            val highest = parsedScores.maxOrNull() ?: 0.0
+            val lowest = parsedScores.minOrNull() ?: 0.0
 
             return SkorAkumulasi(
                 scores = parsedScores,
@@ -94,7 +102,9 @@ data class SkorAkumulasi(
                 numsesi = numsesi,
                 mean = mean,
                 modus = modus,
-                median = median
+                median = median,
+                highest = highest,
+                lowest = lowest
             )
         }
 

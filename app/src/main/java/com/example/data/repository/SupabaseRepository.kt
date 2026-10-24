@@ -207,8 +207,11 @@ class SupabaseRepository(
             if (allQuestions.isEmpty()) {
                 return@withContext Result.failure(Exception("Tidak ada soal tersedia untuk mata pelajaran $subject"))
             }
-            val matchingGrade = allQuestions.filter { it.grade == grade }
-            val candidatePool = if (matchingGrade.size >= 5) matchingGrade else allQuestions
+            // User is eligible for questions in their registered grade and up to 3 levels lower (e.g. Grade 9 is eligible for Grade 6, 7, 8, 9)
+            val minGrade = (grade - 3).coerceAtLeast(1)
+            val eligibleRange = minGrade..grade
+            val eligibleQuestions = allQuestions.filter { it.grade in eligibleRange }
+            val candidatePool = if (eligibleQuestions.size >= 5) eligibleQuestions else allQuestions
             val selected = candidatePool.shuffled().take(10)
             Result.success(selected)
         } catch (e: Exception) {

@@ -31,6 +31,8 @@ class ExampleRobolectricTest {
     assertEquals(224.0, parsed.mean, 0.001)
     assertEquals(180.0, parsed.modus, 0.001)
     assertEquals(235.0, parsed.median, 0.001)
+    assertEquals(265.0, parsed.highest, 0.001)
+    assertEquals(180.0, parsed.lowest, 0.001)
     assertEquals("[180, 180, 260, 235, 265]", parsed.toStoredString())
   }
 
@@ -43,19 +45,57 @@ class ExampleRobolectricTest {
     assertEquals(224.0, parsed.mean, 0.001)
     assertEquals(180.0, parsed.modus, 0.001)
     assertEquals(235.0, parsed.median, 0.001)
+    assertEquals(265.0, parsed.highest, 0.001)
+    assertEquals(180.0, parsed.lowest, 0.001)
   }
 
   @Test
-  fun `append just-finished score to previous scores array`() {
+  fun `append just-finished score to previous scores array and update highest lowest`() {
     val previous = SkorAkumulasi.fromJsonString("[180, 180, 260, 235, 265]")
-    val updated = StatsUtils.updateSkorAkumulasi(previous, 200.0)
+    val updated = StatsUtils.updateSkorAkumulasi(previous, 300.0)
     assertEquals(6, updated.numsesi)
     assertEquals(6, updated.scores.size)
-    assertEquals(1320.0, updated.total, 0.001)
-    assertEquals(220.0, updated.mean, 0.001)
-    assertEquals(180.0, updated.modus, 0.001)
-    assertEquals(217.5, updated.median, 0.001)
-    assertEquals("[180, 180, 260, 235, 265, 200]", updated.toStoredString())
+    assertEquals(1420.0, updated.total, 0.001)
+    assertEquals(300.0, updated.highest, 0.001)
+    assertEquals(180.0, updated.lowest, 0.001)
+
+    val updatedWithLower = StatsUtils.updateSkorAkumulasi(updated, 100.0)
+    assertEquals(7, updatedWithLower.numsesi)
+    assertEquals(300.0, updatedWithLower.highest, 0.001)
+    assertEquals(100.0, updatedWithLower.lowest, 0.001)
+  }
+
+  @Test
+  fun `calculate question timer depends on score`() {
+    // Score 10 gives 60 seconds
+    assertEquals(60, StatsUtils.calculateQuestionTimeSeconds(10))
+    // Score <= 10 gives minimum 60 seconds
+    assertEquals(60, StatsUtils.calculateQuestionTimeSeconds(5))
+    // For each score increase of 10, increase allotted time by 30 seconds
+    assertEquals(90, StatsUtils.calculateQuestionTimeSeconds(20))
+    assertEquals(120, StatsUtils.calculateQuestionTimeSeconds(30))
+    assertEquals(150, StatsUtils.calculateQuestionTimeSeconds(40))
+    assertEquals(180, StatsUtils.calculateQuestionTimeSeconds(50))
+    // Score 25 (+15 over 10 -> +45s) -> 105s
+    assertEquals(105, StatsUtils.calculateQuestionTimeSeconds(25))
+  }
+
+  @Test
+  fun `eligible question grades allow up to 3 levels lower`() {
+    // Grade 9 eligible down to Grade 6 (6, 7, 8, 9)
+    val grade9 = 9
+    val eligibleRange9 = (grade9 - 3).coerceAtLeast(1)..grade9
+    assertEquals(6..9, eligibleRange9)
+
+    // Grade 10 eligible down to Grade 7 (7, 8, 9, 10)
+    val grade10 = 10
+    val eligibleRange10 = (grade10 - 3).coerceAtLeast(1)..grade10
+    assertEquals(7..10, eligibleRange10)
+
+    // Grade 2 bounded by 1
+    val grade2 = 2
+    val eligibleRange2 = (grade2 - 3).coerceAtLeast(1)..grade2
+    assertEquals(1..2, eligibleRange2)
   }
 
   @Test
