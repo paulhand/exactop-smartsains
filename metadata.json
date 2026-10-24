@@ -1,0 +1,6 @@
+{
+  "name": "ExacTop",
+  "description": "Aplikasi Administrasi Data & Kuis STEM (Matematika, Fisika, Kimia) berbasis Supabase dengan gaya Gen-Z.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
