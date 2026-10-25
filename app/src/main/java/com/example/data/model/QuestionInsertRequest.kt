@@ -12,5 +12,6 @@ data class QuestionInsertRequest(
     @Json(name = "jawaban_benar") val jawaban_benar: String = "",
     @Json(name = "pembahasan") val pembahasan: String = "",
     @Json(name = "grade") val grade: Int = 10,
-    @Json(name = "skor") val skor: Int = 10
+    @Json(name = "skor") val skor: Int = 10,
+    @Json(name = "image1") val image1: String = ""
 )

@@ -106,4 +106,30 @@ class ExampleRobolectricTest {
     assertEquals(5, parsed.numsesi)
     assertEquals(224.0, parsed.mean, 0.001)
   }
+
+  @Test
+  fun `parse question and answer images from image1 column`() {
+    // Empty or blank image1
+    val emptyImages = com.example.data.model.QuestionImages.parse("")
+    assertEquals(null, emptyImages.questUrl)
+    assertEquals(null, emptyImages.ansAUrl)
+    assertEquals(false, emptyImages.hasAnyImage)
+
+    // Question only image with empty answer strings
+    val questionOnly = "{'quest': 'images_00150/quest_150_Xk6oyQ2nAz.png', 'ansA': '', 'ansB': '', 'ansC': '', 'ansD': ''}"
+    val parsedQuest = com.example.data.model.QuestionImages.parse(questionOnly)
+    assertEquals("https://aoplaetqkabshapkapwf.storage.supabase.co/storage/v1/object/public/ExacTop/images_00150/quest_150_Xk6oyQ2nAz.png", parsedQuest.questUrl)
+    assertEquals(null, parsedQuest.ansAUrl)
+    assertEquals(null, parsedQuest.ansBUrl)
+    assertEquals(true, parsedQuest.hasAnyImage)
+
+    // Answer images in options
+    val answerImages = "{'ansA': 'bargraphs/ansA_65_Em7oypvVES.png', 'ansB': 'bargraphs/ansB_65_SAN4SoKnyJ.png', 'ansC': 'bargraphs/ansC_65_Y4dcTLUyCO.png', 'ansD': 'bargraphs/ansD_65_KFPFFHnvSB.png'}"
+    val parsedAns = com.example.data.model.QuestionImages.parse(answerImages)
+    assertEquals(null, parsedAns.questUrl)
+    assertEquals("https://aoplaetqkabshapkapwf.storage.supabase.co/storage/v1/object/public/ExacTop/bargraphs/ansA_65_Em7oypvVES.png", parsedAns.ansAUrl)
+    assertEquals("https://aoplaetqkabshapkapwf.storage.supabase.co/storage/v1/object/public/ExacTop/bargraphs/ansB_65_SAN4SoKnyJ.png", parsedAns.ansBUrl)
+    assertEquals("https://aoplaetqkabshapkapwf.storage.supabase.co/storage/v1/object/public/ExacTop/bargraphs/ansC_65_Y4dcTLUyCO.png", parsedAns.ansCUrl)
+    assertEquals("https://aoplaetqkabshapkapwf.storage.supabase.co/storage/v1/object/public/ExacTop/bargraphs/ansD_65_KFPFFHnvSB.png", parsedAns.ansDUrl)
+  }
 }

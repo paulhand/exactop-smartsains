@@ -143,6 +143,15 @@ fun HomeScreen(
                             modifier = Modifier.testTag("home_app_name_text")
                         )
                         Text(
+                            text = "Smart Sains Academy Learning Assistant",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AcidLime,
+                            modifier = Modifier
+                                .padding(vertical = 1.dp)
+                                .testTag("home_subtitle_text")
+                        )
+                        Text(
                             text = "Halo, ${activeMember.nama.ifBlank { "Siswa" }} (K-${activeMember.grade})",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,

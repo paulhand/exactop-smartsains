@@ -63,7 +63,7 @@ fun LoginScreen(
                 modifier = Modifier.testTag("app_title_text")
             )
             Text(
-                text = "Kuis STEM & Data Akumulasi Siswa",
+                text = "Smart Sains Academy Learning Assistant",
                 fontSize = 14.sp,
                 color = TextMuted,
                 modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)

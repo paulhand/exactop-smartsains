@@ -1,5 +1,6 @@
 package com.example.ui.quiz
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,11 +12,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.data.model.Member
 import com.example.ui.components.FeedbackResultDialog
 import com.example.ui.components.GlassCard
@@ -203,6 +208,31 @@ fun QuizScreen(
                                 lineHeight = 24.sp,
                                 modifier = Modifier.testTag("question_text")
                             )
+
+                            // Question image if available in image1['quest']
+                            val questionImageUrl = currentQuestion.parsedImages.questUrl
+                            if (!questionImageUrl.isNullOrBlank()) {
+                                Spacer(modifier = Modifier.height(14.dp))
+                                Surface(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .testTag("question_image_container"),
+                                    color = Color.White,
+                                    border = BorderStroke(1.dp, SurfaceBorder)
+                                ) {
+                                    AsyncImage(
+                                        model = questionImageUrl,
+                                        contentDescription = "Gambar Soal",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .heightIn(min = 120.dp, max = 260.dp)
+                                            .padding(6.dp)
+                                            .testTag("question_image"),
+                                        contentScale = ContentScale.Fit
+                                    )
+                                }
+                            }
                         }
                     }
 
@@ -212,6 +242,7 @@ fun QuizScreen(
                     OptionButton(
                         key = "A",
                         text = currentQuestion.opsi_a,
+                        imageUrl = currentQuestion.parsedImages.ansAUrl,
                         accentColor = ElectricCyan,
                         onClick = { quizViewModel.submitAnswer("A") },
                         testTag = "option_button_a"
@@ -221,6 +252,7 @@ fun QuizScreen(
                     OptionButton(
                         key = "B",
                         text = currentQuestion.opsi_b,
+                        imageUrl = currentQuestion.parsedImages.ansBUrl,
                         accentColor = BrightViolet,
                         onClick = { quizViewModel.submitAnswer("B") },
                         testTag = "option_button_b"
@@ -230,6 +262,7 @@ fun QuizScreen(
                     OptionButton(
                         key = "C",
                         text = currentQuestion.opsi_c,
+                        imageUrl = currentQuestion.parsedImages.ansCUrl,
                         accentColor = AcidLime,
                         onClick = { quizViewModel.submitAnswer("C") },
                         testTag = "option_button_c"
@@ -239,6 +272,7 @@ fun QuizScreen(
                     OptionButton(
                         key = "D",
                         text = currentQuestion.opsi_d,
+                        imageUrl = currentQuestion.parsedImages.ansDUrl,
                         accentColor = ElectricYellow,
                         onClick = { quizViewModel.submitAnswer("D") },
                         testTag = "option_button_d"
@@ -264,7 +298,8 @@ fun QuizScreen(
 private fun OptionButton(
     key: String,
     text: String,
-    accentColor: androidx.compose.ui.graphics.Color,
+    imageUrl: String? = null,
+    accentColor: Color,
     onClick: () -> Unit,
     testTag: String
 ) {
@@ -278,7 +313,7 @@ private fun OptionButton(
             containerColor = SurfaceDarkElevated,
             contentColor = TextWhite
         ),
-        border = androidx.compose.foundation.BorderStroke(1.dp, SurfaceBorder)
+        border = BorderStroke(1.dp, SurfaceBorder)
     ) {
         Row(
             modifier = Modifier
@@ -289,7 +324,7 @@ private fun OptionButton(
             Surface(
                 shape = RoundedCornerShape(8.dp),
                 color = accentColor.copy(alpha = 0.2f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, accentColor)
+                border = BorderStroke(1.dp, accentColor)
             ) {
                 Text(
                     text = key,
@@ -300,12 +335,39 @@ private fun OptionButton(
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = text,
-                fontSize = 14.sp,
-                color = TextWhite,
-                modifier = Modifier.weight(1f)
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                if (text.isNotBlank()) {
+                    Text(
+                        text = text,
+                        fontSize = 14.sp,
+                        color = TextWhite,
+                        modifier = Modifier.testTag("option_text_$key")
+                    )
+                }
+                if (!imageUrl.isNullOrBlank()) {
+                    if (text.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                    }
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp)),
+                        color = Color.White,
+                        border = BorderStroke(1.dp, SurfaceBorder)
+                    ) {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Gambar Opsi $key",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 60.dp, max = 180.dp)
+                                .padding(4.dp)
+                                .testTag("option_image_$key"),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                }
+            }
         }
     }
 }
